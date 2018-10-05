@@ -36,10 +36,8 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)
-                return new CoinPaprikaEntity<Global>(response, false, false, null);
-            else
-                return new CoinPaprikaEntity<Global>(response, false, true, null);
+
+            return new CoinPaprikaEntity<Global>(response, false, response.IsSuccessStatusCode, null);
         }
 
         public async Task<CoinPaprikaEntity<List<CoinInfo>>> GetCoinsAsync()
@@ -56,10 +54,7 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)
-                return new CoinPaprikaEntity<List<CoinInfo>>(response, false, false, null);
-            else
-                return new CoinPaprikaEntity<List<CoinInfo>>(response, false, true, null);
+            return new CoinPaprikaEntity<List<CoinInfo>>(response, false, response.IsSuccessStatusCode, null);
         }
 
         public async Task<CoinPaprikaEntity<List<TickerInfo>>> GetTickerForAll()
@@ -78,10 +73,7 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)
-                return new CoinPaprikaEntity<List<TickerInfo>>(response, false, false, converters);
-            else
-                return new CoinPaprikaEntity<List<TickerInfo>>(response, false, true, converters);
+            return new CoinPaprikaEntity<List<TickerInfo>>(response, false, response.IsSuccessStatusCode, converters);
         }
 
         public async Task<CoinPaprikaEntity<TickerInfo>> GetTickerForCoin(string id)
@@ -103,12 +95,8 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)            
-                return new CoinPaprikaEntity<TickerInfo>(response, false, false, converters);
-            else            
-                return new CoinPaprikaEntity<TickerInfo>(response, false, true, converters);
+            return new CoinPaprikaEntity<TickerInfo>(response, false, response.IsSuccessStatusCode, converters);
         }
-
 
         public async Task<CoinPaprikaEntity<SearchResult>> SearchAsync(string searchterms, int limit = 6, List<SearchCategory> searchCategories = null)
         {
@@ -141,10 +129,7 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)
-                return new CoinPaprikaEntity<SearchResult>(response, false, false, null);
-            else
-                return new CoinPaprikaEntity<SearchResult>(response, false, true, null);
+            return new CoinPaprikaEntity<SearchResult>(response, false, response.IsSuccessStatusCode, null);
         }
     }
 }
