@@ -4,5 +4,3 @@ configuration: Release
 before_build:
 - cmd: dotnet restore
 build:
-dotnet build .\CoinpaprikaAPI.sln
-  verbosity: normal
