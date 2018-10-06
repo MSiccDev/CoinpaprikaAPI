@@ -8,7 +8,7 @@ using System.Text;
 
 namespace CoinpaprikaAPI.Base
 {
-    public class BaseClient
+    public abstract class BaseClient
     {
         private static HttpClient _httpClientInstance;
 

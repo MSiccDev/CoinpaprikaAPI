@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace CoinpaprikaAPI
 {
+    /// <summary>
+    /// CoinPaprika API Client
+    /// </summary>
     public class Client
     {
         private readonly string _apiBaseUrl;
@@ -22,6 +25,9 @@ namespace CoinpaprikaAPI
             _apiBaseUrl = $"https://api.coinpaprika.com/{version}";
         }
 
+        /// <summary>
+        /// Get global information
+        /// </summary>
         public async Task<CoinPaprikaEntity<Global>> GetClobalsAsync()
         {
             var client = BaseClient.GetClient();
@@ -37,9 +43,12 @@ namespace CoinpaprikaAPI
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
 
-            return new CoinPaprikaEntity<Global>(response, false, response.IsSuccessStatusCode, null);
+            return new CoinPaprikaEntity<Global>(response, false, !response.IsSuccessStatusCode, null);
         }
 
+        /// <summary>
+        /// Get all coins listed on coinpaprika
+        /// </summary>
         public async Task<CoinPaprikaEntity<List<CoinInfo>>> GetCoinsAsync()
         {
             var client = BaseClient.GetClient();
@@ -54,9 +63,12 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            return new CoinPaprikaEntity<List<CoinInfo>>(response, false, response.IsSuccessStatusCode, null);
+            return new CoinPaprikaEntity<List<CoinInfo>>(response, false, !response.IsSuccessStatusCode, null);
         }
 
+        /// <summary>
+        /// Get ticker information for all coins
+        /// </summary>
         public async Task<CoinPaprikaEntity<List<TickerInfo>>> GetTickerForAll()
         {
             var converters = new List<JsonConverter>() { StringToDezimalConverter.Instance, StringToIntConverter.Instance, StringToLongConverter.Instance };
@@ -73,9 +85,13 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            return new CoinPaprikaEntity<List<TickerInfo>>(response, false, response.IsSuccessStatusCode, converters);
+            return new CoinPaprikaEntity<List<TickerInfo>>(response, false, !response.IsSuccessStatusCode, converters);
         }
 
+        /// <summary>
+        /// Get ticker information for specific coin
+        /// </summary>
+        /// <param name="id">Id of coin to return e.g. btc-bitcoin, eth-ethereum</param>
         public async Task<CoinPaprikaEntity<TickerInfo>> GetTickerForCoin(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -95,9 +111,15 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            return new CoinPaprikaEntity<TickerInfo>(response, false, response.IsSuccessStatusCode, converters);
+            return new CoinPaprikaEntity<TickerInfo>(response, false, !response.IsSuccessStatusCode, converters);
         }
 
+        /// <summary>
+        /// Search for currencies/icos/people/exchanges/tags
+        /// </summary>
+        /// <param name="searchterms">phrase for search eg. "coin"</param>
+        /// <param name="limit">limit of results per category (max 250, default 6)</param>
+        /// <param name="searchCategories">one or more categories to search (null searches all)</param>
         public async Task<CoinPaprikaEntity<SearchResult>> SearchAsync(string searchterms, int limit = 6, List<SearchCategory> searchCategories = null)
         {
             if (limit < 1 || limit > 250)
@@ -129,7 +151,7 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            return new CoinPaprikaEntity<SearchResult>(response, false, response.IsSuccessStatusCode, null);
+            return new CoinPaprikaEntity<SearchResult>(response, false, !response.IsSuccessStatusCode, null);
         }
     }
 }

@@ -7,11 +7,17 @@ namespace CoinpaprikaAPI.Utils
 {
     public class Helpers
     {
+        /// <summary>
+        /// gets the current assembly name
+        /// </summary>
         public static string GetAssemblyName()
         {
             return typeof(Helpers).Assembly.GetName().Name;
         }
 
+        /// <summary>
+        /// gets the current assembly version
+        /// </summary>
         public static string GetAssemblyVersion()
         {
             var assembly = typeof(Helpers).Assembly.GetName();
@@ -23,6 +29,9 @@ namespace CoinpaprikaAPI.Utils
         private static JsonSerializer _jsonSerializer = null;
         private static JsonSerializerSettings _jsonSerializerSettings = null;
 
+        /// <summary>
+        /// gets a pre-configured JsonSerializer instance
+        /// </summary>
         public static JsonSerializer GetConfiguredJsonSerializer()
         {
             if (_jsonSerializer == null)
@@ -33,6 +42,9 @@ namespace CoinpaprikaAPI.Utils
             return _jsonSerializer;
         }
 
+        /// <summary>
+        /// gets a pre-configured JsonSerializerSettings instance
+        /// </summary>
         public static JsonSerializerSettings GetConfiguredJsonSerializerSettings()
         {
             if (_jsonSerializerSettings == null)
