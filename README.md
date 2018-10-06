@@ -14,7 +14,7 @@ Async C# Client for the [CoinPaprika API](https://api.coinpaprika.com/).
 For the moment, clone this repository and add it to your project.
 
 ### Dependencies
-The library depends on [JSON.net](https://www.nuget.org/packages/Newtonsoft.Json), which is easily the best Json-library for .NET; It should get installed automatically (with the Nuget package), but depending on your project, you may have to install it manually via Nuget Package Manager. 
+The library depends on [JSON.net](https://www.nuget.org/packages/Newtonsoft.Json), which is just simply the best Json-library for .NET; It should get installed automatically (with the Nuget package), but depending on your project, you may have to install it manually via Nuget Package Manager/CLI. 
 
 This library is using .NET Standard 2.0, you can check compatibility of your project [here](https://docs.microsoft.com/en-us/dotnet/standard/net-standard#net-implementation-support).
 
