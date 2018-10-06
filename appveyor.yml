@@ -1,0 +1,12 @@
+version: 1.0.{build}
+branches:
+  only:
+  - master
+image: Visual Studio 2017
+configuration: Release
+init:
+- cmd: git config --global core.autocrlf true
+before_build:
+- cmd: dotnet restore
+build:
+  verbosity: minimal
