@@ -11,15 +11,10 @@ before_build:
 build:
   verbosity: minimal
   publish_nuget: true
-  publish_nuget_symbols: true
-artifacts:
-- path: /.*\.nupkg/
-  name: Nuget
+  publish_nuget_symbols: false
 deploy:
 - provider: NuGet
   name: nuget_release
   api_key:
     secure: 7M1+hgMfmA3p/WVC/vOqPLRDZObbU+A6D3SbPzkkD/W/9N7OmwNMEhxve7iwHQVk
-  artifact: Nuget
-  on:
-    branch: master  
+artifact: /.*\.nupkg/
