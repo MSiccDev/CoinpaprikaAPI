@@ -12,6 +12,7 @@ build:
   verbosity: minimal
 deploy:
   provider: NuGet
+  name: Nuget_Release
   api_key:
     secure: 7M1+hgMfmA3p/WVC/vOqPLRDZObbU+A6D3SbPzkkD/W/9N7OmwNMEhxve7iwHQVk
   skip_symbols: false
