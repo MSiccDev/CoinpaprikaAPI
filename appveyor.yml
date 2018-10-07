@@ -17,6 +17,7 @@ artifacts:
   name: Nuget
 deploy:
 - provider: NuGet
+  name: nuget_release
   api_key:
     secure: 7M1+hgMfmA3p/WVC/vOqPLRDZObbU+A6D3SbPzkkD/W/9N7OmwNMEhxve7iwHQVk
   artifact: Nuget
