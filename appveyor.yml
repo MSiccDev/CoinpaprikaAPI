@@ -10,14 +10,9 @@ before_build:
 - cmd: dotnet restore
 build:
   verbosity: minimal
-  publish_nuget: true
-  publish_nuget_symbols: false
-artifacts:
-- path: '*.nupkg'
-  name: nuget-package
-  type: WebDeployPackage
 deploy:
-- provider: NuGet
+  provider: NuGet
   api_key:
     secure: 7M1+hgMfmA3p/WVC/vOqPLRDZObbU+A6D3SbPzkkD/W/9N7OmwNMEhxve7iwHQVk
-  artifact: nuget-package
+  skip_symbols: false
+  artifact: /.*\.nupkg/
