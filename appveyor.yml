@@ -12,9 +12,12 @@ build:
   verbosity: minimal
   publish_nuget: true
   publish_nuget_symbols: false
+artifacts:
+- path: '*.nupkg'
+  name: nuget-package
+  type: WebDeployPackage
 deploy:
 - provider: NuGet
-  name: nuget_release
   api_key:
     secure: 7M1+hgMfmA3p/WVC/vOqPLRDZObbU+A6D3SbPzkkD/W/9N7OmwNMEhxve7iwHQVk
-artifact: /.*\.nupkg/
+  artifact: nuget-package
