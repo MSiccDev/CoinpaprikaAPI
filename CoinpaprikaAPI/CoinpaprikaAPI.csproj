@@ -15,6 +15,10 @@
     <Description>Async C# Client for the CoinPaprika API</Description>
     <PackageReleaseNotes>Async C# Client for the CoinPaprika API</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
