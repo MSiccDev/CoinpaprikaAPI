@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CoinpaprikaAPI.Entity
 {
-    public class ExchangeInfo
+    public class TeamInfo
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -13,10 +13,7 @@ namespace CoinpaprikaAPI.Entity
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("adjusted_volume_24h_share")]
-        public double AdjustedVolume24HShare { get; set; }
-
-        [JsonProperty("fiats")]
-        public List<FiatInfo> Fiats { get; set; }
+        [JsonProperty("position")]
+        public string Position { get; set; }
     }
 }

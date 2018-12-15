@@ -11,7 +11,7 @@ namespace CoinpaprikaAPI.Entity
         public List<CoinInfo> Currencies { get; set; }
 
         [JsonProperty("exchanges", NullValueHandling = NullValueHandling.Ignore)]
-        public List<ExchangeInfo> Exchanges { get; set; }
+        public List<ExtendedExchangeInfo> Exchanges { get; set; }
 
         [JsonProperty("icos", NullValueHandling = NullValueHandling.Ignore)]
         public List<IcoInfo> Icos { get; set; }

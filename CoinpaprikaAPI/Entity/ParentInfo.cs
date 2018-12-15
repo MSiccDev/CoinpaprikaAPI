@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace CoinpaprikaAPI.Entity
-{  
-
-    public class CoinInfo
+{
+    public class ParentInfo
     {
         [JsonProperty("id")]
         public string Id { get; set; }
@@ -16,17 +15,5 @@ namespace CoinpaprikaAPI.Entity
 
         [JsonProperty("symbol")]
         public string Symbol { get; set; }
-
-        [JsonProperty("rank")]
-        public long Rank { get; set; }
-
-        [JsonProperty("is_new")]
-        public bool IsNew { get; set; }
-
-        [JsonProperty("is_active")]
-        public bool IsActive { get; set; }
-
-        [JsonProperty("type")]
-        public string Type { get; set; }
     }
 }

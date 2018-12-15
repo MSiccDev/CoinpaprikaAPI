@@ -11,6 +11,27 @@ namespace CoinpaprikaAPI.Entity
         Icos,
         People,
         Tags
+   }
+
+    public enum TickerInterval
+    {
+        FiveMinutes,
+        TenMinutes,
+        FifteenMinutes,
+        ThirtyMinutes,
+        FourtyFiveMinutes,
+        OneHour,
+        TwoHours,
+        ThreeHours,
+        SixHours,
+        TwelveHours,
+        TwentyFourHours,
+        OneDay,
+        SevenDays,
+        FourteenDays,
+        ThirtyDays,
+        NinetyDays,
+        ThreeHundredSixtyFiveDays
     }
 }
     

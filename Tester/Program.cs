@@ -13,9 +13,14 @@ namespace Tester
         {
             //await TestGlobalsAsync();
             //await TestCoinsAsync();
+            //await TestCoinByIdAsync();
             //await TestTickerAllAsync();
+            //await TestHistoricalTickerAsync();
             //await TestTickerAsync();
             await TestSearchAsync();
+            //await TestPeopleInfoAsync();
+            //await TestTagsAsync();
+            //await TestExchangesAsync();
         }
 
         private static CoinpaprikaAPI.Client _client = new CoinpaprikaAPI.Client();
@@ -59,18 +64,84 @@ namespace Tester
             }
         }
 
+        static async Task TestCoinByIdAsync()
+        {
+            Console.WriteLine("Testing Coin by Id:");
+
+            Console.WriteLine("enter coin id:");
+
+            var id = Console.ReadLine();
+
+            Console.WriteLine($"fetching extended CoinInfo for id '{id}' ...");
+
+            var extCoinInfo = await _client.GetCoinByIdAsync(id);
+
+            if (extCoinInfo.Error == null)
+            {
+                Console.WriteLine($"Extended CoinInfo for {extCoinInfo.Value.Name}:");
+                Console.WriteLine($"{extCoinInfo.Value.Description}");
+                Console.WriteLine($"WhitePaper-Link: {extCoinInfo.Value.Whitepaper.Link}");
+                Console.WriteLine("Explorers:");
+                extCoinInfo.Value.Links.Explorer.ForEach(e => Console.WriteLine(e.OriginalString));
+                Console.WriteLine("Website/Source Links:");
+                extCoinInfo.Value.Links.Website?.ForEach(e => Console.WriteLine(e.OriginalString));
+                extCoinInfo.Value.Links.SourceCode?.ForEach(e => Console.WriteLine(e.OriginalString));
+                Console.WriteLine("Social Media Links:");
+                extCoinInfo.Value.Links.Facebook?.ForEach(e => Console.WriteLine(e?.OriginalString));
+                extCoinInfo.Value.Links.Medium?.ForEach(e => Console.WriteLine(e?.OriginalString));
+                extCoinInfo.Value.Links.Reddit?.ForEach(e => Console.WriteLine(e?.OriginalString));
+                extCoinInfo.Value.Links.Youtube?.ForEach(e => Console.WriteLine(e?.OriginalString));
+            }
+            else
+            {
+               Console.WriteLine($"{id} not found, please enter a valid id next time");
+            }
+
+            Console.WriteLine("Tweets:");
+            var timeline = await _client.GetTwitterTimelineForCoinAsync(id);
+            timeline.Value.ForEach(t => Console.WriteLine($"{t.Date}: {t.Status})"));
+
+            Console.WriteLine("Events:");
+            var events = await _client.GetEventsForCoinAsync(id);
+            events.Value.ForEach(e => Console.WriteLine($"{e.Date} - {e.DateTo} : {e.Name}"));
+
+            Console.WriteLine("Exchanges:");
+            var exchanges = await _client.GetExchangesForCoinAsync(id);
+            exchanges.Value.ForEach(e => Console.WriteLine($"{e.Name} - {e.AdjustedVolume24HShare}%"));
+
+            Console.WriteLine("Markets:");
+            var markets = await _client.GetMarketsForCoinAsync(id, new[] {"USD", "BTC" });
+            markets.Value.ForEach(m => Console.WriteLine($"{m.BaseCurrencyName} on {m.ExchangeName}"));
+
+            Console.WriteLine("OHLC Latest:");
+            var ohlcvLatest = await _client.GetLatestOhlcForCoinAsync(id);
+            ohlcvLatest.Value.ForEach(v => Console.WriteLine($"{id}: Open: {v.Open}({v.TimeOpen}), Close: {v.Close}({v.TimeClose}), High: {v.High}, Low: {v.Low}"));
+
+
+            Console.WriteLine("OHLC Historical:");
+
+            var firstOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            var end = DateTime.Now.Subtract(TimeSpan.FromDays(1));
+
+            var ohlcvHistorical = await _client.GetHistoricalOhlcForCoinAsync(id, new DateTimeOffset(firstOfMonth), end, 200);
+            ohlcvHistorical.Value.ForEach(v => Console.WriteLine($"{id}: Open: {v.Open}({v.TimeOpen}), Close: {v.Close}({v.TimeClose}), High: {v.High}, Low: {v.Low}"));
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
+
         static async Task TestTickerAllAsync()
         {
             Console.WriteLine("fetching ticker...");
 
-            var ticker = await _client.GetTickerForAll();
+            var ticker = await _client.GetTickersAsync(new[] { "USD", "BTC" });
 
             if (ticker.Error == null)
             {
-                Console.WriteLine("CoinPaprika Ticker (all): ");
+                Console.WriteLine("CoinPaprika Tickers: ");
                 foreach (var t in ticker.Value.OrderBy(c => c.Rank))
                 {
-                    Console.WriteLine($"{t.Name}({t.Id}({t.Symbol})) - {t.Rank} - {nameof(t.PriceBtc)}:{t.PriceBtc}/{nameof(t.PriceUsd)}:{t.PriceUsd} - {nameof(t.PercentChange24h)}:{t.PercentChange24h}");
+                    Console.WriteLine($"{t.Name}({t.Id}({t.Symbol})) - {t.Rank} - BTC:{t.Quotes["BTC"].Price}/USD:{t.Quotes["USD"].Price} - PercentChange24h:{t.Quotes["USD"].PercentChange24H}");
                 }
 
                 Console.WriteLine("Press any key to finish test...");
@@ -89,12 +160,11 @@ namespace Tester
 
             Console.WriteLine($"fetching ticker for id {id} ...");
 
-            var ticker = await _client.GetTickerForCoin(id);
+            var ticker = await _client.GetTickerForIdAsync(id, new[] { "USD", "BTC" });
 
             if (ticker.Error == null)
             {
-
-                Console.WriteLine($"{ticker.Value.Name}({ticker.Value.Id}({ticker.Value.Symbol})) - {ticker.Value.Rank} - {nameof(ticker.Value.PriceBtc)}:{ticker.Value.PriceBtc}/{nameof(ticker.Value.PriceUsd)}:{ticker.Value.PriceUsd} - {nameof(ticker.Value.PercentChange24h)}:{ticker.Value.PercentChange24h}");
+                Console.WriteLine($"{ticker.Value.Name}({ticker.Value.Id}({ticker.Value.Symbol})) - {ticker.Value.Rank} - BTC:{ticker.Value.Quotes["BTC"].Price}/USD:{ticker.Value.Quotes["USD"].Price} - PercentChange24h:{ticker.Value.Quotes["USD"].PercentChange24H}");
                 Console.WriteLine("Press any key to finish test...");
             }
             else
@@ -106,6 +176,57 @@ namespace Tester
             Console.WriteLine("Bye!");
         }
 
+        static async Task TestHistoricalTickerAsync()
+        {
+            Console.WriteLine("Testing historical Ticker info:");
+
+            Console.WriteLine("enter coin id:");
+
+            var id = Console.ReadLine();
+
+            Console.WriteLine($"fetching ticker for id {id} ...");
+
+            var ticker = await _client.GetHistoricalTickerForIdAsync(id, new DateTimeOffset(DateTime.Now.Subtract(TimeSpan.FromDays(1))), DateTimeOffset.Now, 1000, "USD", TickerInterval.OneHour);
+
+            if (ticker.Error == null)
+            {
+                Console.WriteLine($"{ticker.Value.Name}({ticker.Value.Id}({ticker.Value.Symbol})) - {ticker.Value.Rank} - BTC:{ticker.Value.Quotes["BTC"].Price}/USD:{ticker.Value.Quotes["USD"].Price} - PercentChange24h:{ticker.Value.Quotes["USD"].PercentChange24H}");
+                Console.WriteLine("Press any key to finish test...");
+            }
+            else
+            {
+                Console.WriteLine($"CoinPaprika returned an error: {ticker.Error.ErrorMessage}");
+            }
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
+
+        static async Task TestPeopleInfoAsync()
+        {
+            Console.WriteLine("Testing Personinfo:");
+
+            Console.WriteLine("enter person-id:");
+
+            var id = Console.ReadLine();
+
+            Console.WriteLine($"fetching person with id {id} ...");
+
+            var person = await _client.GetPeopleByIdAsync(id);
+
+            if (person.Error == null)
+            {
+                Console.WriteLine($"Found: {person.Value.Name}:");
+                Console.WriteLine($"{person.Value.Description}");
+            }
+            else
+            {
+                Console.WriteLine($"no person with id {id} found");
+            }
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
 
         static async Task TestSearchAsync()
         {
@@ -160,5 +281,73 @@ namespace Tester
             Console.WriteLine("Bye!");
         }
 
+        static async Task TestTagsAsync()
+        {
+            Console.WriteLine("Testing Tags:");
+
+            Console.WriteLine("Fetching available tags:");
+            var listTags = await _client.GetTagsAsync();
+
+            Console.WriteLine($"received a total number of {listTags.Value.Count} TagInfos.");
+
+            Console.ReadLine();
+
+            Console.WriteLine("selecting a random tag from reveived tags list ...");
+
+            var rnd = new Random();
+            var selected = rnd.Next(listTags.Value.Count - 1);
+
+            var tagId = listTags.Value.ElementAt(selected).Id;
+
+            Console.WriteLine($"Fetching info for tag: {tagId}");
+
+            var tagById = await _client.GetTagByIdAsync(tagId);
+
+            Console.WriteLine($"TagInfo: {tagById.Value.Name} ({tagById.Value.Type}) - {tagById.Value.Description}");
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
+
+        static async Task TestExchangesAsync()
+        {
+            Console.WriteLine("Testing Echanges:");
+
+            Console.WriteLine("Fetching available exchanges:");
+            var listExchanges = await _client.GetExchangesAsync(new[] {"USD", "BTC", "ETH" });
+
+            Console.WriteLine($"received a total number of {listExchanges.Value.Count} Exchanges.");
+
+            Console.ReadLine();
+
+            Console.WriteLine("selecting a random exchange from reveived list ...");
+
+            var rnd = new Random();
+            var selected = rnd.Next(listExchanges.Value.Count - 1);
+
+            var exchangeId = listExchanges.Value.ElementAt(selected).Id;
+
+            Console.WriteLine($"Getting Exchange info for id {exchangeId}...");
+
+            var exchangeById = await _client.GetExchangeByIdAsync(exchangeId, new[] { "USD", "BTC", "ETH" });
+
+            if (exchangeById.Error == null)
+            {
+                Console.WriteLine($"{exchangeById.Value.Name}, Rank: {exchangeById.Value.AdjustedRank}, Web: {exchangeById.Value.Links.Website.FirstOrDefault()} ");
+            }
+
+            Console.WriteLine($"Getting Market info for id {exchangeId} ...");
+
+            var markets = await _client.GetMarketsByExchangeIdAsync(exchangeId);
+
+            if (markets.Error == null)
+            {
+                markets.Value.ForEach(m => Console.WriteLine($"Market: {m.Pair} - {m.Category}, Volume24H%:{m.ReportedVolume24HShare}"));
+            }
+
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
     }
 }
