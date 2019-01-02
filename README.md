@@ -67,3 +67,6 @@ returns CoinPaprikaEntity of Type [SearchResult](https://github.com/MSiccDev/Coi
 
 ### License
 CoinPaprika C# Client is availabe unter the MIT license, see also the LICENSE file.
+
+### Donations
+Donations are always welcome. Just click [here](https://atomicpay.io/u/v5zbkVNV0PNO) (via AtomicPay.io)
