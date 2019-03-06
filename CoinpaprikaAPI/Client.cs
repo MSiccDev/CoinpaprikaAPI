@@ -203,7 +203,7 @@ namespace CoinpaprikaAPI
         /// Latest Open/High/Low/Close values with volume and market_cap by coin Id
         /// </summary>
         /// <param name="id">Id of coin to return e.g. btc-bitcoin, eth-ethereum</param>
-        /// <param name="quotes">returned data quote (available values: usd btc)</param>
+        /// <param name="quote">returned data quote (available values: usd btc)</param>
         public async Task<CoinPaprikaEntity<List<OhlcValue>>> GetLatestOhlcForCoinAsync(string id, string quote = "USD")
         {
             if (string.IsNullOrWhiteSpace(id))
@@ -223,7 +223,6 @@ namespace CoinpaprikaAPI
 
             return new CoinPaprikaEntity<List<OhlcValue>>(response, false, !response.IsSuccessStatusCode);
         }
-
 
         /// <summary>
         /// Historical Open/High/Low/Close values with volume and market_cap by coin Id
@@ -260,6 +259,32 @@ namespace CoinpaprikaAPI
 
             return new CoinPaprikaEntity<List<OhlcValue>>(response, false, !response.IsSuccessStatusCode);
         }
+
+        /// <summary>
+        /// Latest Open/High/Low/Close values with volume and market_cap by coin Id
+        /// </summary>
+        /// <param name="id">Id of coin to return e.g. btc-bitcoin, eth-ethereum</param>
+        /// <param name="quote">returned data quote (available values: usd btc)</param>
+        public async Task<CoinPaprikaEntity<List<OhlcValue>>> GetTodayOhlcForCoinAsync(string id, string quote = "USD")
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                throw new NotSupportedException("id must be defined");
+
+            var client = BaseClient.GetClient();
+
+            var requestUrl = $"{_apiBaseUrl}/coins/{id}/ohlcv/today".AddParameterToUrl("quote", quote);
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUrl)
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+
+            return new CoinPaprikaEntity<List<OhlcValue>>(response, false, !response.IsSuccessStatusCode);
+        }
+
 
         #endregion
 
@@ -367,6 +392,9 @@ namespace CoinpaprikaAPI
         /// <param name="quotes">list of quotes to return. Currently allowed values: USD, BTC, ETH, PLN</param>
         public async Task<CoinPaprikaEntity<List<ExtendedExchangeInfo>>> GetExchangesAsync(string[] quotes = null)
         {
+            if (quotes?.Any(q => !q.IsSupportedQuoteSymbol()) ?? false)
+                throw new ArgumentOutOfRangeException(nameof(quotes), "The passed quotes contains invalid symbols.");
+
             var client = BaseClient.GetClient();
 
             var quotesString = quotes?.ToArrayString() ?? "USD";
@@ -476,6 +504,9 @@ namespace CoinpaprikaAPI
         /// <param name="additionalFields">list of additional fields to include in query result for each tag. Currently "coins" is the only supported value</param>
         public async Task<CoinPaprikaEntity<List<TagInfo>>> GetTagsAsync(string[] additionalFields = null)
         {
+            if (additionalFields?.Any(f => !f.IsSupportedTagField()) ?? false)
+                throw new ArgumentOutOfRangeException(nameof(additionalFields), "The passed quotes contains invalid symbols.");
+
             var client = BaseClient.GetClient();
 
             var requestUrl = $"{_apiBaseUrl}/tags";
@@ -531,7 +562,8 @@ namespace CoinpaprikaAPI
         /// <param name="searchterms">phrase for search eg. "coin"</param>
         /// <param name="limit">limit of results per category (max 250, default 6)</param>
         /// <param name="searchCategories">one or more categories to search (null searches all)</param>
-        public async Task<CoinPaprikaEntity<SearchResult>> SearchAsync(string searchterms, int limit = 6, List<SearchCategory> searchCategories = null)
+        /// <param name="onlySymbols">set to true to search currencies by symbol</param>
+        public async Task<CoinPaprikaEntity<SearchResult>> SearchAsync(string searchterms, int limit = 6, List<SearchCategory> searchCategories = null, bool onlySymbols = false)
         {
             if (limit < 1 || limit > 250)
                 throw new ArgumentOutOfRangeException(nameof(limit), "limit must be between 1 and 250");
@@ -553,6 +585,9 @@ namespace CoinpaprikaAPI
             var client = BaseClient.GetClient();
 
             var requestUrl = $"{_apiBaseUrl}/search?q={WebUtility.UrlEncode(searchterms)}&c={categoriesToSearch}&limit={limit}";
+
+            if (onlySymbols)
+                requestUrl.AddParameterToUrl("modifier", "symbol_search");
 
             var request = new HttpRequestMessage()
             {

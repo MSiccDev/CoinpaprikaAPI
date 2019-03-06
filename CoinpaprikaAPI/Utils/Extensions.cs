@@ -84,6 +84,18 @@ namespace CoinpaprikaAPI.Utils
                 return false;
         }
 
+        public static bool IsSupportedTagField(this string tagField)
+        {
+            if (!string.IsNullOrWhiteSpace(tagField))
+            {
+                var allowed = new[] { "coins", "icos" };
+
+                return allowed.Contains(tagField);
+            }
+            else
+                return false;
+        }
+
         public static string AddParameterToUrl(this string url, string parameterName, object parameterValue)
         {
             if (url.Contains("?"))
