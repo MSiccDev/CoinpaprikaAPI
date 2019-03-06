@@ -20,22 +20,46 @@ namespace CoinpaprikaAPI.Entity
         [JsonProperty("rank")]
         public long Rank { get; set; }
 
+        [JsonProperty("price_usd")]
+        [JsonConverter(typeof(StringToDezimalConverter))]
+        public decimal PriceUsd { get; set; }
+
+        [JsonProperty("price_btc")]
+        [JsonConverter(typeof(StringToDezimalConverter))]
+        public decimal PriceBtc { get; set; }
+
+        [JsonProperty("volume_24h_usd")]
+        [JsonConverter(typeof(StringToDezimalConverter))]
+        public decimal Volume24HUsd { get; set; }
+
+        [JsonProperty("market_cap_usd")]
+        [JsonConverter(typeof(StringToLongConverter))]
+        public long MarketCapUsd { get; set; }
+
         [JsonProperty("circulating_supply")]
+        [JsonConverter(typeof(StringToLongConverter))]
         public long CirculatingSupply { get; set; }
 
         [JsonProperty("total_supply")]
+        [JsonConverter(typeof(StringToLongConverter))]
         public long TotalSupply { get; set; }
 
         [JsonProperty("max_supply")]
+        [JsonConverter(typeof(StringToLongConverter))]
         public long MaxSupply { get; set; }
 
-        [JsonProperty("beta_value")]
-        public decimal BetaValue { get; set; }
+        [JsonProperty("percent_change_1h")]
+        public decimal PercentChange1H { get; set; }
+
+        [JsonProperty("percent_change_24h")]
+        public decimal PercentChange24H { get; set; }
+
+        [JsonProperty("percent_change_7d")]
+        public decimal PercentChange7D { get; set; }
 
         [JsonProperty("last_updated")]
+        [JsonConverter(typeof(StringToDateTimeOffsetConverter))]
         public DateTimeOffset LastUpdated { get; set; }
 
-        [JsonProperty("quotes")]
-        public Dictionary<string, QuoteInfo> Quotes { get; set; }
     }
 }

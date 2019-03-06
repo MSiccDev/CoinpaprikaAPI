@@ -4,8 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.1</LangVersion>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageTags>cp, coinpaprika, coin, markets, prices, trading, crypto, cryptocurrencies</PackageTags>
-    <Copyright>MSiccDev Software Development 2018</Copyright>
+    <PackageTags>cp, coinpaprika, coin, markets, prices, trading, crypto, cryptocurrencies, research, conversion,</PackageTags>
+    <Copyright>MSiccDev Software Development 2019</Copyright>
     <Product>Coinpaprika API Client</Product>
     <Authors>MSiccDev Software Development</Authors>
     <RepositoryUrl>https://github.com/MSiccDev/CoinpaprikaAPI</RepositoryUrl>
@@ -13,12 +13,12 @@
     <PackageProjectUrl>https://github.com/coinpaprika</PackageProjectUrl>
     <PackageIconUrl>https://github.com/MSiccDev/CoinpaprikaAPI/tree/master/CoinpaprikaAPI/cp_logo_package.png</PackageIconUrl>
     <Description>Async C# Client for the CoinPaprika API</Description>
-    <PackageReleaseNotes>Async C# Client for the CoinPaprika API</PackageReleaseNotes>
+    <PackageReleaseNotes>updated API client to version 1.5 of the CoinPaprika API</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.1.0</Version>
-    <PackageVersion>1.1.0</PackageVersion>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
-    <FileVersion>1.1.0</FileVersion>
+    <Version>1.2.0</Version>
+    <PackageVersion>1.2.0</PackageVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
+    <FileVersion>1.2.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

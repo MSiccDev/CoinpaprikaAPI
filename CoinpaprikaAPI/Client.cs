@@ -6,6 +6,7 @@ using CoinpaprikaAPI.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -263,14 +264,15 @@ namespace CoinpaprikaAPI
         #endregion
 
         #region tickers
-
-
         /// <summary>
         /// Get ticker information for all coins
         /// </summary>
-        public async Task<CoinPaprikaEntity<List<TickerInfo>>> GetTickersAsync(string[] quotes = null)
+        public async Task<CoinPaprikaEntity<List<TickerWithQuotesInfo>>> GetTickersAsync(string[] quotes = null)
         {
             var client = BaseClient.GetClient();
+
+            if (quotes?.Any(q => !q.IsSupportedQuoteSymbol()) ?? false)
+                throw new ArgumentOutOfRangeException(nameof(quotes), "The passed quotes contains invalid symbols.");
 
             var quotesString = quotes?.ToArrayString() ?? "USD";
 
@@ -284,7 +286,9 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            return new CoinPaprikaEntity<List<TickerInfo>>(response, false, !response.IsSuccessStatusCode);
+            var json = await response.Content.ReadAsStringAsync();
+
+            return new CoinPaprikaEntity<List<TickerWithQuotesInfo>>(response, false, !response.IsSuccessStatusCode);
         }
 
         /// <summary>
@@ -292,16 +296,14 @@ namespace CoinpaprikaAPI
         /// </summary>
         /// <param name="id">Id of coin to return e.g. btc-bitcoin, eth-ethereum</param>
         /// <param name="quotes">Comma separated list of quotes to return. Currently allowed values: USD, BTC, ETH</param>
-        public async Task<CoinPaprikaEntity<TickerInfo>> GetTickerForIdAsync(string id, string[] quotes = null)
+        public async Task<CoinPaprikaEntity<TickerInfo>> GetTickerForIdAsync(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new NotSupportedException("id must be defined");
 
-            var quotesString = quotes?.ToArrayString() ?? "USD";
-
             var client = BaseClient.GetClient();
 
-            var requestUrl = $"{_apiBaseUrl}/ticker/{id}".AddParameterToUrl("quotes", quotesString.ToLowerInvariant());
+            var requestUrl = $"{_apiBaseUrl}/ticker/{id}";
 
             var request = new HttpRequestMessage()
             {
@@ -310,6 +312,8 @@ namespace CoinpaprikaAPI
             };
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
+
+            var json = await response.Content.ReadAsStringAsync();
 
             return new CoinPaprikaEntity<TickerInfo>(response, false, !response.IsSuccessStatusCode);
         }
@@ -324,7 +328,7 @@ namespace CoinpaprikaAPI
         /// <param name="quote">returned data quote (available values: usd, btc)</param>
         /// <param name="interval">returned points interval</param>
         /// <returns></returns>
-        public async Task<CoinPaprikaEntity<TickerInfo>> GetHistoricalTickerForIdAsync(string id, DateTimeOffset startTime, DateTimeOffset endTime = default, int limit = 1000, string quote = "USD", TickerInterval interval = TickerInterval.FifteenMinutes)
+        public async Task<CoinPaprikaEntity<List<HistoricalTickerInfo>>> GetHistoricalTickerForIdAsync(string id, DateTimeOffset startTime, DateTimeOffset endTime = default, int limit = 1000, string quote = "USD", TickerInterval interval = TickerInterval.FifteenMinutes)
         {
             if (string.IsNullOrWhiteSpace(id))
                 throw new NotSupportedException("id must be defined");
@@ -349,9 +353,9 @@ namespace CoinpaprikaAPI
 
             var response = await client.SendAsync(request).ConfigureAwait(false);
 
-            var json = await response.Content.ReadAsStringAsync();
+            //var json = await response.Content.ReadAsStringAsync();
 
-            return new CoinPaprikaEntity<TickerInfo>(response, false, !response.IsSuccessStatusCode);
+            return new CoinPaprikaEntity<List<HistoricalTickerInfo>>(response, false, !response.IsSuccessStatusCode);
         }
 
         #endregion
@@ -520,7 +524,7 @@ namespace CoinpaprikaAPI
 
         #endregion
 
-        #region search
+        #region tools
         /// <summary>
         /// Search for currencies/icos/people/exchanges/tags
         /// </summary>
@@ -561,21 +565,41 @@ namespace CoinpaprikaAPI
             return new CoinPaprikaEntity<SearchResult>(response, false, !response.IsSuccessStatusCode, null);
         }
 
-        #endregion
-
-        #region deprecated
-        [Obsolete("GetTickerForAll is obsolete, please use GetTickers (this method is just here for compatibility and will be removed soon)")]
-        public async Task<CoinPaprikaEntity<List<TickerInfo>>> GetTickerForAll()
+        /// <summary>
+        /// Convert currencies
+        /// </summary>
+        /// <param name="baseCurrencyId">the base currency for conversion</param>
+        /// <param name="quoteCurrencyId">the target currency for conversion</param>
+        /// <param name="amount">amount of conversion</param>
+        /// <returns></returns>
+        public async Task<CoinPaprikaEntity<PriceConversionInfo>> ConvertAsync(string baseCurrencyId, string quoteCurrencyId, decimal amount)
         {
-            return await GetTickersAsync();
-        }
+            if (string.IsNullOrWhiteSpace(baseCurrencyId))
+                throw new NotSupportedException("baseCurrencyId must be defined");
 
-        [Obsolete("GetTickerForCoin is deprecated, please use GetTickerForId (this method is just here for compatibility and will be removed soon)")]
-        public async Task<CoinPaprikaEntity<TickerInfo>> GetTickerForCoin(string id)
-        {
-            return await GetTickerForIdAsync(id);
-        }
+            if (string.IsNullOrWhiteSpace(quoteCurrencyId))
+                throw new NotSupportedException("quoteCurrencyId must be defined");
 
-        #endregion
+            if (amount <= (decimal)0.0)
+                throw new NotSupportedException("amount must be higher than 0.0");
+
+            var client = BaseClient.GetClient();
+
+            var requestUrl = $"{_apiBaseUrl}/price-converter".
+                AddParameterToUrl("base_currency_id", baseCurrencyId).
+                AddParameterToUrl("quote_currency_id", quoteCurrencyId).
+                AddParameterToUrl("amount", amount);
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUrl)
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+
+            return new CoinPaprikaEntity<PriceConversionInfo>(response, false, !response.IsSuccessStatusCode);
+        }
+        #endregion  
     }
 }

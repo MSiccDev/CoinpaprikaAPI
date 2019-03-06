@@ -29,7 +29,6 @@ namespace CoinpaprikaAPI.Utils
             return string.Empty;
         }
 
-
         public static string ToIntervalString(this TickerInterval interval)
         {
             switch (interval)
@@ -73,6 +72,17 @@ namespace CoinpaprikaAPI.Utils
             return null;
         }
 
+        public static bool IsSupportedQuoteSymbol(this string quoteSymbol)
+        {
+            if (!string.IsNullOrWhiteSpace(quoteSymbol))
+            {
+                var allowed = new[] { "BTC", "ETH", "USD", "EUR", "PLN", "KRW", "GBP", "CAD", "JPY", "RUB", "TRY", "NZD", "AUD", "CHF", "UAH", "HKD", "SGD", "NGN", "PHP", "MXN", "BRL", "THB", "CLP", "CNY", "CZK", "DKK", "HUF", "IDR", "ILS", "INR", "MYR", "NOK", "PKR", "SEK", "TWD", "ZAR", "VND", "BOB", "COP", "PEN", "ARS", "ISK" };
+
+                return allowed.Contains(quoteSymbol);
+            }
+            else
+                return false;
+        }
 
         public static string AddParameterToUrl(this string url, string parameterName, object parameterValue)
         {

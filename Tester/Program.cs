@@ -17,11 +17,14 @@ namespace Tester
             //await TestTickerAllAsync();
             //await TestHistoricalTickerAsync();
             //await TestTickerAsync();
-            await TestSearchAsync();
+            //await TestSearchAsync();
             //await TestPeopleInfoAsync();
             //await TestTagsAsync();
             //await TestExchangesAsync();
+            //await TestConversionAsync();
         }
+
+
 
         private static CoinpaprikaAPI.Client _client = new CoinpaprikaAPI.Client();
 
@@ -141,7 +144,7 @@ namespace Tester
                 Console.WriteLine("CoinPaprika Tickers: ");
                 foreach (var t in ticker.Value.OrderBy(c => c.Rank))
                 {
-                    Console.WriteLine($"{t.Name}({t.Id}({t.Symbol})) - {t.Rank} - BTC:{t.Quotes["BTC"].Price}/USD:{t.Quotes["USD"].Price} - PercentChange24h:{t.Quotes["USD"].PercentChange24H}");
+                    Console.WriteLine($"{t.Name}({t.Id}({t.Symbol})) - {t.Rank} - BTC:{t.Quotes["BTC"].Price}/USD:{t.Quotes["USD"].Price} - PercentChange24h:{t.Quotes["BTC"].PercentChange24H}%(BTC)/{t.Quotes["USD"].PercentChange24H}%(USD)");
                 }
 
                 Console.WriteLine("Press any key to finish test...");
@@ -160,11 +163,11 @@ namespace Tester
 
             Console.WriteLine($"fetching ticker for id {id} ...");
 
-            var ticker = await _client.GetTickerForIdAsync(id, new[] { "USD", "BTC" });
+            var ticker = await _client.GetTickerForIdAsync(id);
 
             if (ticker.Error == null)
             {
-                Console.WriteLine($"{ticker.Value.Name}({ticker.Value.Id}({ticker.Value.Symbol})) - {ticker.Value.Rank} - BTC:{ticker.Value.Quotes["BTC"].Price}/USD:{ticker.Value.Quotes["USD"].Price} - PercentChange24h:{ticker.Value.Quotes["USD"].PercentChange24H}");
+                Console.WriteLine($"{ticker.Value.Name}({ticker.Value.Id}({ticker.Value.Symbol})) - {ticker.Value.Rank} - BTC:{ticker.Value.PriceBtc}/USD:{ticker.Value.PriceUsd} - PercentChange24h:{ticker.Value.PercentChange24H}");
                 Console.WriteLine("Press any key to finish test...");
             }
             else
@@ -175,6 +178,7 @@ namespace Tester
             Console.ReadLine();
             Console.WriteLine("Bye!");
         }
+
 
         static async Task TestHistoricalTickerAsync()
         {
@@ -190,7 +194,11 @@ namespace Tester
 
             if (ticker.Error == null)
             {
-                Console.WriteLine($"{ticker.Value.Name}({ticker.Value.Id}({ticker.Value.Symbol})) - {ticker.Value.Rank} - BTC:{ticker.Value.Quotes["BTC"].Price}/USD:{ticker.Value.Quotes["USD"].Price} - PercentChange24h:{ticker.Value.Quotes["USD"].PercentChange24H}");
+                foreach (var historic in ticker.Value)
+                {
+                    Console.WriteLine($"(Ticker ({id}) : {historic.Timestamp}: ({historic.Price})) - {historic.Volume24H}");
+
+                }
                 Console.WriteLine("Press any key to finish test...");
             }
             else
@@ -345,6 +353,38 @@ namespace Tester
                 markets.Value.ForEach(m => Console.WriteLine($"Market: {m.Pair} - {m.Category}, Volume24H%:{m.ReportedVolume24HShare}"));
             }
 
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
+
+        static async Task TestConversionAsync()
+        {
+            Console.WriteLine("Testing conversion:");
+
+            Console.WriteLine("enter base currency:");
+            var baseCcyId = Console.ReadLine();
+
+            Console.WriteLine("enter target currency:");
+            var targetCcyId = Console.ReadLine();
+
+            Console.WriteLine("enter amount:");
+            var amount = Console.ReadLine();
+
+            if (decimal.TryParse(amount, out var final))
+            {
+                var result = await _client.ConvertAsync(baseCcyId, targetCcyId, final);
+
+                if (result.Error == null)
+                {
+                    Console.WriteLine($"Conversion Result: {final} {result.Value.BaseCurrencyName} are worth {result.Value.Price} {result.Value.QuoteCurrencyName}");
+                    Console.WriteLine("Press any key to finish search test...");
+                }
+                else
+                {
+                    Console.WriteLine($"CoinPaprika returned an error: {result.Error.ErrorMessage}");
+                }
+            }
 
             Console.ReadLine();
             Console.WriteLine("Bye!");
