@@ -171,5 +171,4 @@ returns CoinPaprikaEntity of Type [PriceConversionInfo](https://github.com/MSicc
 ### License
 CoinPaprika C# Client is availabe unter the MIT license, see also the LICENSE file.
 
-### Donations
-Donations are always welcome. Just click [here](https://atomicpay.me/msiccdev) (via [AtomicPay.io](https://atomicpay.io))
+
