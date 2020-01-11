@@ -9,6 +9,16 @@ namespace CoinpaprikaAPI.Utils
 {
     public class Helpers
     {
+        #region Private Fields
+
+        private static JsonSerializer _jsonSerializer = null;
+
+        private static JsonSerializerSettings _jsonSerializerSettings = null;
+
+        #endregion Private Fields
+
+        #region Public Methods
+
         /// <summary>
         /// gets the current assembly name
         /// </summary>
@@ -27,9 +37,6 @@ namespace CoinpaprikaAPI.Utils
 
             return version.ToString();
         }
-
-        private static JsonSerializer _jsonSerializer = null;
-        private static JsonSerializerSettings _jsonSerializerSettings = null;
 
         /// <summary>
         /// gets a pre-configured JsonSerializer instance
@@ -64,6 +71,20 @@ namespace CoinpaprikaAPI.Utils
             return _jsonSerializerSettings;
         }
 
-    }
+        /// <summary>
+        /// gets the logo of the specified coinId
+        /// </summary>
+        /// <param name="coinId">
+        /// the coinId to construct the logo url for
+        /// </param>
+        /// <returns>
+        /// the url of the specified coin logo
+        /// </returns>
+        public static string GetLogoUrlByCoinId(string coinId)
+        {
+            return $"https://static2.coinpaprika.com/coin/{coinId}/logo.png";
+        }
 
+        #endregion Public Methods
+    }
 }
