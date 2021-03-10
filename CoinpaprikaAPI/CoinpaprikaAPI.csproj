@@ -13,12 +13,12 @@
     <PackageProjectUrl>https://github.com/coinpaprika</PackageProjectUrl>
     <PackageIconUrl>https://github.com/MSiccDev/CoinpaprikaAPI/tree/master/CoinpaprikaAPI/cp_logo_package.png</PackageIconUrl>
     <Description>Async C# Client for the CoinPaprika API</Description>
-    <PackageReleaseNotes>updated API client to version 1.5 of the CoinPaprika API</PackageReleaseNotes>
+    <PackageReleaseNotes>updated API client to version 1.6.1 of the CoinPaprika API</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.2.8</Version>
-    <PackageVersion>1.2.8</PackageVersion>
-    <AssemblyVersion>1.2.8</AssemblyVersion>
-    <FileVersion>1.2.8</FileVersion>
+    <Version>1.3.21101</Version>
+    <PackageVersion>1.3.21101</PackageVersion>
+    <AssemblyVersion>1.3.21101</AssemblyVersion>
+    <FileVersion>1.3.21101</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

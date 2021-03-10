@@ -17,14 +17,13 @@ namespace CoinpaprikaAPI.JsonConverters
                 return default(DateTimeOffset);
             else
             {
-                if (long.TryParse(value, out long l))
+                if (DateTimeOffset.TryParse(value, out DateTimeOffset dateTimeOffset))
                 {
-                    return DateTimeOffset.FromUnixTimeSeconds(l);
+                    return dateTimeOffset;
                 }
             }
+
             throw new System.Exception("Cannot unmarshal type DateTimeOffset");
-
-
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

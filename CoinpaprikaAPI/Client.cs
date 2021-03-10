@@ -635,6 +635,61 @@ namespace CoinpaprikaAPI
 
             return new CoinPaprikaEntity<PriceConversionInfo>(response, false, !response.IsSuccessStatusCode);
         }
-        #endregion  
+        #endregion
+
+        #region contracts
+
+        /// <summary>
+        /// List contracts platforms
+        /// </summary>
+        /// <returns></returns>
+        public async Task<CoinPaprikaEntity<List<string>>> GetContractPlatformsAsync()
+        {
+            var client = BaseClient.GetClient();
+
+            var requestUrl = $"{_apiBaseUrl}/contracts";
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUrl)
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+
+            return new CoinPaprikaEntity<List<string>>(response, false, !response.IsSuccessStatusCode);
+        }
+
+
+        /// <summary>
+        /// Get all contract addressess for platform
+        /// </summary>
+        /// <param name="platformId">the platform id to fetch the addresses for</param>
+        /// <returns></returns>
+        public async Task<CoinPaprikaEntity<List<ContractDetailInfo>>> GetContractAddressesForPlatform(string platformId)
+        {
+            if (string.IsNullOrWhiteSpace(platformId))
+                throw new NotSupportedException($"'{nameof(platformId)}' must be defined.");
+
+            var client = BaseClient.GetClient();
+
+            var requestUrl = $"{_apiBaseUrl}/contracts/{platformId}";
+
+            var request = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUrl)
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+
+            return new CoinPaprikaEntity<List<ContractDetailInfo>>(response, false, !response.IsSuccessStatusCode);
+        }
+
+
+        //not implementing redirects from platform addresses to ticker and historical values
+        //use the id to fetch those values directly
+
+        #endregion
     }
 }

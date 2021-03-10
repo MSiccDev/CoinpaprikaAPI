@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CoinpaprikaAPI.JsonConverters;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,8 +8,6 @@ namespace CoinpaprikaAPI.Entity
 {
     public class ExtendedCoinInfo
     {
-        #region Public Properties
-
         [JsonProperty("description")]
         public string Description { get; set; }
 
@@ -24,6 +23,15 @@ namespace CoinpaprikaAPI.Entity
         [JsonProperty("hash_algorithm")]
         public string HashAlgorithm { get; set; }
 
+        [JsonProperty("contract")]
+        public string Contract { get; set; }
+
+        [JsonProperty("platform")]
+        public string Platform { get; set; }
+
+        [JsonProperty("contracts")]
+        public List<Contract> Contracts { get; set; }
+
         [JsonProperty("id")]
         public string Id { get; set; }
 
@@ -38,6 +46,9 @@ namespace CoinpaprikaAPI.Entity
 
         [JsonProperty("links")]
         public Links Links { get; set; }
+
+        [JsonProperty("links_extended")]
+        public List<LinksExtended> LinksExtended { get; set; }
 
         [JsonProperty("message")]
         public string Message { get; set; }
@@ -78,6 +89,5 @@ namespace CoinpaprikaAPI.Entity
         [JsonProperty("whitepaper")]
         public WhitepaperInfo Whitepaper { get; set; }
 
-        #endregion Public Properties
     }
 }

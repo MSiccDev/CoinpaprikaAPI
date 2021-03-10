@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,6 +24,8 @@ namespace Tester
             //await TestTagsAsync();
             //await TestExchangesAsync();
             //await TestConversionAsync();
+
+            await TestContractsAsync();
         }
 
 
@@ -385,6 +389,38 @@ namespace Tester
                     Console.WriteLine($"CoinPaprika returned an error: {result.Error.ErrorMessage}");
                 }
             }
+
+            Console.ReadLine();
+            Console.WriteLine("Bye!");
+        }
+
+
+        static async Task TestContractsAsync()
+        {
+            Console.WriteLine("Testing Contracts...");
+
+            var platforms = await _client.GetContractPlatformsAsync();
+
+            if (platforms.Error == null)
+            {
+                Console.WriteLine($"Received {platforms.Value.Count} results:");
+                foreach (var platform in platforms.Value)
+                    Console.WriteLine(platform);
+
+                Console.WriteLine("Fetching contract addresses of Neo ....");
+
+                var addresses = await _client.GetContractAddressesForPlatform("neo-neo");
+
+                if (addresses.Error == null)
+                {
+                    Console.WriteLine($"Found {addresses.Value.Count} contract adresses:");
+
+                    foreach (var address in addresses.Value)
+                        Console.WriteLine($"{address.Id} - {address.Address}");
+                }
+
+            }
+
 
             Console.ReadLine();
             Console.WriteLine("Bye!");

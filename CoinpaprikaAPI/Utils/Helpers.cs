@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using CoinpaprikaAPI.JsonConverters;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Globalization;
@@ -65,7 +66,8 @@ namespace CoinpaprikaAPI.Utils
                     Converters =
                     {
                         new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-                    }
+                    },
+                    NullValueHandling = NullValueHandling.Ignore
                 };
             }
             return _jsonSerializerSettings;
